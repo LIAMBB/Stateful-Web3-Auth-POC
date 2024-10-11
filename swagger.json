@@ -1,0 +1,209 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample authentication server with Web3 auth support.",
+    "title": "Auth API",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/web3/challenge": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Get a challenge for Web3 authentication",
+        "operationId": "web3Challenge",
+        "responses": {
+          "200": {
+            "description": "Challenge generated successfully",
+            "schema": {
+              "$ref": "#/definitions/Web3Challenge"
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/web3/verify": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verify Web3 authentication challenge",
+        "operationId": "web3Verify",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Signed Web3 challenge",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Web3SignedChallenge"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Web3 authentication",
+            "schema": {
+              "$ref": "#/definitions/TokenPair"
+            }
+          },
+          "400": {
+            "description": "Invalid input or signature verification failed"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Sign up a new user",
+        "operationId": "signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "User signup details",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignupRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid input or signature verification failed"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/test": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Test endpoint with token authentication",
+        "operationId": "testEndpoint",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful authentication",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "eth_address": {
+          "type": "string"
+        },
+        "public_key": {
+          "type": "string"
+        }
+      }
+    },
+    "TokenPair": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "Web3Challenge": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        }
+      }
+    },
+    "Web3SignedChallenge": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "public_key": {
+          "type": "string"
+        },
+        "challenge": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        }
+      }
+    },
+    "SignupRequest": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}
